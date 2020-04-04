@@ -18,7 +18,8 @@ class CalculatorViewController: UIViewController {
     
     var tip = 0.0
     var billTotal = 0.0
-    var people = 0
+    var people = 2
+    var finalResult = "0.0"
     
     @IBAction func tipChanged(_ sender: UIButton) {
         
@@ -32,7 +33,7 @@ class CalculatorViewController: UIViewController {
         let buttonTitle = sender.currentTitle!
         let buttonTitleWithoutPct = String(buttonTitle.dropLast())
         let buttonTitleAsNumber = Double(buttonTitleWithoutPct)!
-        tip = buttonTitleAsNumber/100
+        tip = buttonTitleAsNumber / 100
     }
     
     @IBAction func stepperValueChanged(_ sender: UIStepper) {
@@ -46,9 +47,23 @@ class CalculatorViewController: UIViewController {
         let bill = billTextField.text!
         if bill != ""
         {
-            let billAmount = Double(bill)!
-            let payPerPerson = billAmount * (tip + 1) / Double(people)
-            let result = String(format: "%.2f", payPerPerson)
+            billTotal = Double(bill)!
+            let result = billTotal * (tip + 1) / Double(people)
+            finalResult = String(format: "%.2f", result)
+        }
+        
+        self.performSegue(withIdentifier: "goToResult", sender: self)
+        
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "goToResult"
+        {
+            let destinationVC = segue.destination as! ResultsViewController
+            destinationVC.result = finalResult
+            destinationVC.numberOfPeople = people
+            destinationVC.tip = Int(tip * 100)
         }
     }
     
